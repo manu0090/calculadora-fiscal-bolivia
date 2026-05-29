@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 // ── UTILS ────────────────────────────────────────────────────────────────────
 const fmt  = n => Number(n).toLocaleString("es-BO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -894,16 +894,28 @@ function Alertas({ calc, mes, anio }) {
 }
 
 // ── ROOT APP ─────────────────────────────────────────────────────────────────
+const LS = {
+  get: (k, fallback) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
 export default function App() {
-  const [screen,   setScreen]   = useState("splash");
-  const [tab,      setTab]      = useState("inicio");
-  const [income,   setIncome]   = useState(initInc());
-  const [delivery, setDelivery] = useState(initDel());
-  const [facturas, setFacturas] = useState("");
-  const [historial,setHistorial]= useState([]);
   const now = new Date();
-  const [mes,  setMes]  = useState(now.getMonth()+1);
-  const [anio, setAnio] = useState(now.getFullYear());
+  const [screen,   setScreen]   = useState(() => LS.get("cfb_seen", false) ? "app" : "splash");
+  const [tab,      setTab]      = useState("inicio");
+  const [income,   setIncome]   = useState(() => LS.get("cfb_income",   initInc()));
+  const [delivery, setDelivery] = useState(() => LS.get("cfb_delivery", initDel()));
+  const [facturas, setFacturas] = useState(() => LS.get("cfb_facturas", ""));
+  const [historial,setHistorial]= useState(() => LS.get("cfb_historial", []));
+  const [mes,  setMes]  = useState(() => LS.get("cfb_mes",  now.getMonth()+1));
+  const [anio, setAnio] = useState(() => LS.get("cfb_anio", now.getFullYear()));
+
+  useEffect(() => { LS.set("cfb_income",   income);   }, [income]);
+  useEffect(() => { LS.set("cfb_delivery", delivery); }, [delivery]);
+  useEffect(() => { LS.set("cfb_facturas", facturas); }, [facturas]);
+  useEffect(() => { LS.set("cfb_historial",historial);}, [historial]);
+  useEffect(() => { LS.set("cfb_mes",  mes);  }, [mes]);
+  useEffect(() => { LS.set("cfb_anio", anio); }, [anio]);
 
   const setInc = (id,f,v) => setIncome(p    => ({ ...p, [id]:{ ...p[id],[f]:v } }));
   const setDel = (id,f,v) => setDelivery(p  => ({ ...p, [id]:{ ...p[id],[f]:v } }));
@@ -923,7 +935,7 @@ export default function App() {
   const cargar = m => { setIncome(m._inc); setDelivery(m._del); setFacturas(m._fac); setMes(m.mes); setAnio(m.anio); setTab("ingresos"); };
   const eliminar = key => setHistorial(prev => prev.filter(m => m.key !== key));
 
-  if (screen === "splash") return <Splash onStart={()=>setScreen("app")} />;
+  if (screen === "splash") return <Splash onStart={()=>{ LS.set("cfb_seen", true); setScreen("app"); }} />;
 
   const TABS = [
     { id:"inicio",       icon:"🏠", label:"Inicio"        },
