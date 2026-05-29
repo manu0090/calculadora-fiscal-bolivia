@@ -936,7 +936,7 @@ export default function App() {
   ];
 
   return (
-    <div style={{ minHeight:"100vh", background:T.bg, maxWidth:430, margin:"0 auto", fontFamily:"'Inter','Segoe UI',sans-serif", color:T.g900, display:"flex", flexDirection:"column" }}>
+    <div style={{ height:"100vh", background:T.bg, maxWidth:430, margin:"0 auto", fontFamily:"'Inter','Segoe UI',sans-serif", color:T.g900, display:"flex", flexDirection:"column", overflow:"hidden" }}>
       {/* HEADER */}
       <div style={{ background:T.blue, padding:"44px 16px 14px", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", right:-30, top:-30, width:150, height:150, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
@@ -970,7 +970,7 @@ export default function App() {
       </div>
 
       {/* CONTENT */}
-      <div style={{ flex:1, overflowY:"auto" }}>
+      <div style={{ flex:1, overflowY:"auto", minHeight:0 }}>
         {tab==="inicio"       && <Dashboard     calc={calc} mes={mes} anio={anio} historial={historial} onNav={setTab} />}
         {tab==="ingresos"     && <Ingresos      income={income} setInc={setInc} facturas={facturas} setFacturas={setFacturas} calc={calc} onNext={()=>setTab("repartidores")} />}
         {tab==="repartidores" && <Repartidores  delivery={delivery} setDel={setDel} calc={calc} onNext={()=>setTab("resultados")} />}
