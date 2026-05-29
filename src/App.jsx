@@ -948,9 +948,9 @@ export default function App() {
   ];
 
   return (
-    <div style={{ height:"100vh", background:T.bg, maxWidth:430, margin:"0 auto", fontFamily:"'Inter','Segoe UI',sans-serif", color:T.g900, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+    <div style={{ height:"100%", width:"100%", maxWidth:430, background:T.bg, fontFamily:"'Inter','Segoe UI',sans-serif", color:T.g900, display:"flex", flexDirection:"column", overflow:"hidden" }}>
       {/* HEADER */}
-      <div style={{ background:T.blue, padding:"44px 16px 14px", position:"relative", overflow:"hidden" }}>
+      <div style={{ background:T.blue, padding:"env(safe-area-inset-top, 12px) 16px 14px", paddingTop:"max(env(safe-area-inset-top, 0px), 12px)", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", right:-30, top:-30, width:150, height:150, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div>
@@ -970,19 +970,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* TAB BAR — scroll horizontal */}
-      <div style={{ background:T.white, borderBottom:`1px solid ${T.g200}`, overflowX:"auto", display:"flex", position:"sticky", top:0, zIndex:50, scrollbarWidth:"none" }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{ flexShrink:0, background:"none", border:"none", cursor:"pointer", padding:"8px 12px 6px", fontSize:10, fontWeight:tab===t.id?700:500, color:tab===t.id?T.blue:T.g400, borderBottom:`2.5px solid ${tab===t.id?T.blue:"transparent"}`, transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:2, position:"relative", minWidth:60 }}>
-            <span style={{ fontSize:16 }}>{t.icon}</span>
-            <span style={{ whiteSpace:"nowrap" }}>{t.label}</span>
-            {t.badge && <span style={{ position:"absolute", top:4, right:8, background:T.green, color:T.white, borderRadius:99, fontSize:8, fontWeight:800, padding:"1px 4px" }}>{t.badge}</span>}
-          </button>
-        ))}
-      </div>
-
       {/* CONTENT */}
-      <div style={{ flex:1, overflowY:"auto", minHeight:0 }}>
+      <div style={{ flex:1, overflowY:"auto", minHeight:0, overflowX:"hidden" }}>
         {tab==="inicio"       && <Dashboard     calc={calc} mes={mes} anio={anio} historial={historial} onNav={setTab} />}
         {tab==="ingresos"     && <Ingresos      income={income} setInc={setInc} facturas={facturas} setFacturas={setFacturas} calc={calc} onNext={()=>setTab("repartidores")} />}
         {tab==="repartidores" && <Repartidores  delivery={delivery} setDel={setDel} calc={calc} onNext={()=>setTab("resultados")} />}
@@ -990,6 +979,17 @@ export default function App() {
         {tab==="historial"    && <Historial     historial={historial} onEliminar={eliminar} onCargar={cargar} />}
         {tab==="simulador"    && <Simulador     calc={calc} />}
         {tab==="alertas"      && <Alertas       calc={calc} mes={mes} anio={anio} />}
+      </div>
+
+      {/* TAB BAR — scroll horizontal */}
+      <div style={{ background:T.white, borderTop:`1px solid ${T.g200}`, overflowX:"auto", display:"flex", zIndex:50, scrollbarWidth:"none", paddingBottom:"env(safe-area-inset-bottom, 0px)", flexShrink:0 }}>
+        {TABS.map(t => (
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{ flexShrink:0, background:"none", border:"none", cursor:"pointer", padding:"8px 12px 6px", fontSize:10, fontWeight:tab===t.id?700:500, color:tab===t.id?T.blue:T.g400, borderTop:`2.5px solid ${tab===t.id?T.blue:"transparent"}`, transition:"all 0.2s", display:"flex", flexDirection:"column", alignItems:"center", gap:2, position:"relative", minWidth:60 }}>
+            <span style={{ fontSize:16 }}>{t.icon}</span>
+            <span style={{ whiteSpace:"nowrap" }}>{t.label}</span>
+            {t.badge && <span style={{ position:"absolute", top:4, right:8, background:T.green, color:T.white, borderRadius:99, fontSize:8, fontWeight:800, padding:"1px 4px" }}>{t.badge}</span>}
+          </button>
+        ))}
       </div>
     </div>
   );
