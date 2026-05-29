@@ -935,6 +935,15 @@ export default function App() {
   const cargar = m => { setIncome(m._inc); setDelivery(m._del); setFacturas(m._fac); setMes(m.mes); setAnio(m.anio); setTab("ingresos"); };
   const eliminar = key => setHistorial(prev => prev.filter(m => m.key !== key));
 
+  const resetTodo = () => {
+    if (!window.confirm("¿Borrar TODOS los datos? Esta acción no se puede deshacer.")) return;
+    const n = new Date();
+    setIncome(initInc()); setDelivery(initDel()); setFacturas(""); setHistorial([]);
+    setMes(n.getMonth()+1); setAnio(n.getFullYear());
+    ["cfb_income","cfb_delivery","cfb_facturas","cfb_historial","cfb_mes","cfb_anio","cfb_seen"].forEach(k => localStorage.removeItem(k));
+    setTab("inicio");
+  };
+
   if (screen === "splash") return <Splash onStart={()=>{ LS.set("cfb_seen", true); setScreen("app"); }} />;
 
   const TABS = [
@@ -957,7 +966,7 @@ export default function App() {
             <div style={{ fontSize:10, fontWeight:700, letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(255,255,255,0.50)", marginBottom:3 }}>🇧🇴 Bolivia · Régimen General</div>
             <div style={{ fontSize:20, fontWeight:800, color:T.white }}>Calculadora <span style={{ opacity:0.60 }}>Fiscal</span></div>
           </div>
-          <div style={{ display:"flex", gap:6 }}>
+          <div style={{ display:"flex", gap:6, alignItems:"center" }}>
             <select value={mes} onChange={e=>setMes(Number(e.target.value))}
               style={{ background:"rgba(255,255,255,0.14)", border:"none", borderRadius:8, padding:"5px 8px", color:T.white, fontSize:11, fontWeight:700, outline:"none", cursor:"pointer" }}>
               {MESES.map((m,i)=><option key={i} value={i+1} style={{ color:T.g900, background:T.white }}>{m.slice(0,3)}</option>)}
@@ -966,6 +975,10 @@ export default function App() {
               style={{ background:"rgba(255,255,255,0.14)", border:"none", borderRadius:8, padding:"5px 8px", color:T.white, fontSize:11, fontWeight:700, outline:"none", cursor:"pointer" }}>
               {[2023,2024,2025,2026,2027].map(y=><option key={y} value={y} style={{ color:T.g900, background:T.white }}>{y}</option>)}
             </select>
+            <button onClick={resetTodo} title="Borrar todos los datos"
+              style={{ background:"rgba(255,255,255,0.12)", border:"1px solid rgba(255,255,255,0.20)", borderRadius:8, padding:"5px 8px", color:"rgba(255,255,255,0.75)", fontSize:14, cursor:"pointer", lineHeight:1 }}>
+              🗑
+            </button>
           </div>
         </div>
       </div>
